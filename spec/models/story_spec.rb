@@ -1,8 +1,9 @@
 require 'spec_helper'
 
-describe Story do
+describe Story, :type => :model do
 
-  subject { FactoryGirl.build :story }
+  let(:story) { FactoryGirl.build(:story) }
+  subject { story  }
 
   describe "validations" do
 
@@ -71,28 +72,41 @@ describe Story do
 
     subject { Story.new }
 
-    its(:state)       { should == "unstarted" }
-    its(:story_type)  { should == "feature" }
+    describe '#state' do
+      subject { super().state }
+      it { is_expected.to eq("unstarted") }
+    end
+
+    describe '#story_type' do
+      subject { super().story_type }
+      it { is_expected.to eq("feature") }
+    end
 
   end
 
   describe "#to_s" do
 
-    before { subject.title = "Dummy Title" }
-    its(:to_s) { should == "Dummy Title" }
+    before :each do
+      story.title = "Dummy Title"
+    end
+
+    describe '#to_s' do
+      subject { super().to_s }
+      it { is_expected.to eq("Dummy Title") }
+    end
 
   end
 
   describe "#estimated?" do
-    
+
     context "when estimate is nil" do
       before { subject.estimate = nil }
-      it { should_not be_estimated }
+      it { is_expected.not_to be_estimated }
     end
 
     context "when estimate is not nil" do
       before { subject.estimate = 0 }
-      it { should be_estimated }
+      it { is_expected.to be_estimated }
     end
 
   end
@@ -104,12 +118,12 @@ describe Story do
 
       context "when estimate is nil" do
         before { subject.estimate = nil }
-        it { should be_estimable }
+        it { is_expected.to be_estimable }
       end
 
       context "when estimate is not nil" do
         before { subject.estimate = 0 }
-        it { should_not be_estimable }
+        it { is_expected.not_to be_estimable }
       end
 
     end
@@ -117,7 +131,7 @@ describe Story do
     ['chore', 'bug', 'release'].each do |story_type|
       specify "a #{story_type} is not estimable" do
         subject.story_type = story_type
-        subject.should_not be_estimable
+        expect(subject).not_to be_estimable
       end
     end
 
@@ -127,11 +141,11 @@ describe Story do
     before { subject.id = 42 }
 
     specify do
-      subject.as_json['story'].keys.sort.should == [
+      expect(subject.as_json['story'].keys.sort).to eq([
         "title", "accepted_at", "created_at", "updated_at", "description",
         "project_id", "story_type", "owned_by_id", "requested_by_id", "estimate",
         "state", "position", "id", "errors", "labels", "notes"
-      ].sort
+      ].sort)
     end
   end
 
@@ -141,7 +155,7 @@ describe Story do
       before { subject.position = 42 }
 
       it "does nothing" do
-        subject.set_position_to_last.should be true
+        expect(subject.set_position_to_last).to be_truthy
         subject.position = 42
       end
     end
@@ -151,7 +165,7 @@ describe Story do
 
       it "sets position to 1" do
         subject.set_position_to_last
-        subject.position.should == 1
+        expect(subject.position).to eq(1)
       end
     end
 
@@ -165,7 +179,7 @@ describe Story do
 
       it "incrememnts the position by 1" do
         subject.set_position_to_last
-        subject.position.should == 42
+        expect(subject.position).to eq(42)
       end
     end
   end
@@ -179,7 +193,7 @@ describe Story do
       # FIXME This is non-deterministic
       it "gets set when state changes to 'accepted'" do
         subject.update_attribute :state, 'accepted'
-        subject.accepted_at.should == Date.today
+        expect(subject.accepted_at).to eq(Date.today)
       end
 
     end
@@ -191,14 +205,14 @@ describe Story do
       # FIXME This is non-deterministic
       it "is unchanged when state changes to 'accepted'" do
         subject.update_attribute :state, 'accepted'
-        subject.accepted_at.should == Date.parse('1999/01/01')
+        expect(subject.accepted_at).to eq(Date.parse('1999/01/01'))
       end
 
       it "is unset when state changes from 'accepted'" do
-        subject.accepted_at = Date.parse('1999/01/01') 
+        subject.accepted_at = Date.parse('1999/01/01')
         subject.update_attribute :state, 'accepted'
         subject.update_attribute :state, 'started'
-        subject.accepted_at.should be_nil
+        expect(subject.accepted_at).to be_nil
       end
 
     end
@@ -207,11 +221,11 @@ describe Story do
   describe "#to_csv" do
 
     it "returns an array" do
-      subject.to_csv.should be_kind_of(Array)
+      expect(subject.to_csv).to be_kind_of(Array)
     end
 
     it "has the same number of elements as the .csv_headers" do
-      subject.to_csv.length.should == Story.csv_headers.length
+      expect(subject.to_csv.length).to eq(Story.csv_headers.length)
     end
   end
 
@@ -229,70 +243,144 @@ describe Story do
     end
 
     specify do
-      subject.notify_users.should include(requested_by)
+      expect(subject.notify_users).to include(requested_by)
     end
 
     specify do
-      subject.notify_users.should include(owned_by)
+      expect(subject.notify_users).to include(owned_by)
     end
 
     specify do
-      subject.notify_users.should include(note_user)
+      expect(subject.notify_users).to include(note_user)
     end
 
     it "strips out nil values" do
       subject.requested_by = subject.owned_by = nil
-      subject.notify_users.should_not include(nil)
+      expect(subject.notify_users).not_to include(nil)
     end
   end
 
   context "when unscheduled" do
-    before { subject.state = 'unscheduled' }
-    its(:events)  { should == [:start] }
-    its(:column)  { should == '#chilly_bin' }
+    before :each do
+      story.state = 'unscheduled'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to eq([:start]) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#chilly_bin') }
+    end
   end
 
   context "when unstarted" do
-    before { subject.state = 'unstarted' }
-    its(:events)  { should == [:start] }
-    its(:column)  { should == '#backlog' }
+    before :each do
+      story.state = 'unstarted'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to eq([:start]) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#backlog') }
+    end
   end
 
   context "when started" do
-    before { subject.state = 'started' }
-    its(:events)  { should == [:finish] }
-    its(:column)  { should == '#in_progress' }
+    before :each do
+      story.state = 'started'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to eq([:finish]) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#in_progress') }
+    end
   end
 
   context "when finished" do
-    before { subject.state = 'finished' }
-    its(:events)  { should == [:deliver] }
-    its(:column)  { should == '#in_progress' }
+    before :each do
+      story.state = 'finished'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to eq([:deliver]) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#in_progress') }
+    end
   end
 
   context "when delivered" do
-    before { subject.state = 'delivered' }
-    its(:events)  { should include(:accept) }
-    its(:events)  { should include(:reject) }
-    its(:column)  { should == '#in_progress' }
+    before :each do
+      story.state = 'delivered'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to include(:accept) }
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to include(:reject) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#in_progress') }
+    end
   end
 
   context "when rejected" do
-    before { subject.state = 'rejected' }
-    its(:events)  { should == [:restart] }
-    its(:column)  { should == '#in_progress' }
+    before :each do
+      story.state = 'rejected'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to eq([:restart]) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#in_progress') }
+    end
   end
 
   context "when accepted" do
-    before { subject.state = 'accepted' }
-    its(:events)  { should == [] }
-    its(:column)  { should == '#done' }
+    before :each do
+      story.state = 'accepted'
+    end
+
+    describe '#events' do
+      subject { super().events }
+      it { is_expected.to eq([]) }
+    end
+
+    describe '#column' do
+      subject { super().column }
+      it { is_expected.to eq('#done') }
+    end
   end
 
 
   describe '.csv_headers' do
 
-    specify { Story.csv_headers.should be_kind_of(Array) }
+    specify { expect(Story.csv_headers).to be_kind_of(Array) }
 
   end
 end

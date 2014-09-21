@@ -1,9 +1,8 @@
 require 'spec_helper'
 
-describe User do
+describe User, :type => :model do
 
   describe "validations" do
-    
     it "requires a name" do
       subject.name = ''
       subject.valid?
@@ -24,7 +23,10 @@ describe User do
     subject { FactoryGirl.build(:user, :name => "Dummy User", :initials => "DU",
                                     :email => "dummy@example.com") }
 
-    its(:to_s) { should == "Dummy User (DU) <dummy@example.com>" }
+    describe '#to_s' do
+      subject { super().to_s }
+      it { is_expected.to eq("Dummy User (DU) <dummy@example.com>") }
+    end
 
   end
 
@@ -35,7 +37,7 @@ describe User do
     end
 
     specify {
-      subject.as_json['user'].keys.sort.should == %w[email id initials name]
+      expect(subject.as_json['user'].keys.sort).to eq(%w[email id initials name])
     }
 
   end

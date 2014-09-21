@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Notifications do
+describe Notifications, :type => :mailer do
 
   let(:requested_by) { mock_model(User) }
   let(:owned_by) { mock_model(User) }
@@ -16,13 +16,24 @@ describe Notifications do
 
     subject  { Notifications.delivered(story, delivered_by) }
 
-    its(:subject) { should == "[Test Project] Your story 'Test story' has been delivered for acceptance." }
-    its(:to)      { [requested_by.email] }
-    its(:from)    { [delivered_by.email] }
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to eq("[Test Project] Your story 'Test story' has been delivered for acceptance.") }
+    end
 
-    specify { subject.body.encoded.should match("Deliverer has delivered your story 'Test story'.") }
-    specify { subject.body.encoded.should match("You can now review the story, and either accept or reject it.") }
-    specify { subject.body.encoded.should match(project_url(project)) }
+    describe '#to' do
+      subject { super().to }
+      it { [requested_by.email] }
+    end
+
+    describe '#from' do
+      subject { super().from }
+      it { [delivered_by.email] }
+    end
+
+    specify { expect(subject.body.encoded).to match("Deliverer has delivered your story 'Test story'.") }
+    specify { expect(subject.body.encoded).to match("You can now review the story, and either accept or reject it.") }
+    specify { expect(subject.body.encoded).to match(project_url(project)) }
 
   end
 
@@ -32,12 +43,23 @@ describe Notifications do
 
     subject  { Notifications.accepted(story, accepted_by) }
 
-    its(:subject) { should == "[Test Project] Accepter ACCEPTED your story 'Test story'." }
-    its(:to)      { [owned_by.email] }
-    its(:from)    { [accepted_by.email] }
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to eq("[Test Project] Accepter ACCEPTED your story 'Test story'.") }
+    end
 
-    specify { subject.body.encoded.should match("Accepter has accepted the story 'Test story'.") }
-    specify { subject.body.encoded.should match(project_url(project)) }
+    describe '#to' do
+      subject { super().to }
+      it { [owned_by.email] }
+    end
+
+    describe '#from' do
+      subject { super().from }
+      it { [accepted_by.email] }
+    end
+
+    specify { expect(subject.body.encoded).to match("Accepter has accepted the story 'Test story'.") }
+    specify { expect(subject.body.encoded).to match(project_url(project)) }
 
   end
 
@@ -47,12 +69,23 @@ describe Notifications do
 
     subject  { Notifications.rejected(story, rejected_by) }
 
-    its(:subject) { should == "[Test Project] Rejecter REJECTED your story 'Test story'." }
-    its(:to)      { [owned_by.email] }
-    its(:from)    { [rejected_by.email] }
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to eq("[Test Project] Rejecter REJECTED your story 'Test story'.") }
+    end
 
-    specify { subject.body.encoded.should match("Rejecter has rejected the story 'Test story'.") }
-    specify { subject.body.encoded.should match(project_url(project)) }
+    describe '#to' do
+      subject { super().to }
+      it { [owned_by.email] }
+    end
+
+    describe '#from' do
+      subject { super().from }
+      it { [rejected_by.email] }
+    end
+
+    specify { expect(subject.body.encoded).to match("Rejecter has rejected the story 'Test story'.") }
+    specify { expect(subject.body.encoded).to match(project_url(project)) }
 
   end
 
@@ -64,10 +97,21 @@ describe Notifications do
 
     subject { Notifications.new_note(note, notify_users) }
 
-    its(:subject) { should == "[Test Project] New comment on 'Test story'" }
-    its(:to)      { ['foo@example.com'] }
-    its(:from)    { [user.email] }
+    describe '#subject' do
+      subject { super().subject }
+      it { is_expected.to eq("[Test Project] New comment on 'Test story'") }
+    end
 
-    specify { subject.body.encoded.should match("Note User added the following comment to the story") }
+    describe '#to' do
+      subject { super().to }
+      it { ['foo@example.com'] }
+    end
+
+    describe '#from' do
+      subject { super().from }
+      it { [user.email] }
+    end
+
+    specify { expect(subject.body.encoded).to match("Note User added the following comment to the story") }
   end
 end

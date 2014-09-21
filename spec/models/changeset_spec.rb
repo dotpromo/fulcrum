@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe Changeset do
+describe Changeset, :type => :model do
 
   describe "validations" do
 
@@ -49,7 +49,10 @@ describe Changeset do
         expect(story.errors[:project].size).to eq(0)
       end
 
-      its(:project) { should == project }
+      describe '#project' do
+        subject { super().project }
+        it { is_expected.to eq(project) }
+      end
 
     end
 
@@ -57,7 +60,7 @@ describe Changeset do
 
   describe ".since" do
     specify do
-      Changeset.since(234).where_values.first.should == 'id > 234'
+      expect(Changeset.since(234).where_values.first).to eq('id > 234')
     end
   end
 end

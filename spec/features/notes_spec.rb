@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Notes" do
+describe "Notes", :type => :feature do
 
   before(:each) do
     # FIXME - Having to set this really high for the 'adds a note to a story
@@ -37,7 +37,7 @@ describe "Notes" do
         click_on 'Add note'
       end
 
-      find('#in_progress .story .notelist .note').should have_content('Adding a new note')
+      expect(find('#in_progress .story .notelist .note')).to have_content('Adding a new note')
 
     end
 
@@ -54,7 +54,7 @@ describe "Notes" do
           click_on 'Delete'
         end
       end
-      find('#in_progress .story .notelist').should_not have_content('Delete me please')
+      expect(find('#in_progress .story .notelist')).not_to have_content('Delete me please')
     end
 
   end

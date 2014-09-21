@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Stories" do
+describe "Stories", :type => :feature do
 
   before(:each) do
     sign_in user
@@ -44,7 +44,7 @@ describe "Stories" do
         click_on 'accept'
       end
 
-      find('#in_progress .story.accepted .story-title').should have_content('New story')
+      expect(find('#in_progress .story.accepted .story-title')).to have_content('New story')
 
     end
 
@@ -69,7 +69,7 @@ describe "Stories" do
         click_on 'Delete'
       end
 
-      page.should_not have_css(story_selector(story))
+      expect(page).not_to have_css(story_selector(story))
     end
 
   end
@@ -94,25 +94,25 @@ describe "Stories" do
 
       columns.each do |column, button_text|
         selector = "table.stories td.#{column}_column"
-        page.should have_css(selector)
+        expect(page).to have_css(selector)
 
         # Hide the column
         within('#column-toggles') do
           click_on button_text
         end
-        page.should_not have_css(selector)
+        expect(page).not_to have_css(selector)
 
         # Show the column
         within('#column-toggles') do
           click_on button_text
         end
-        page.should have_css(selector)
+        expect(page).to have_css(selector)
 
         # Hide the column with the 'close' button in the column header
         within("#{selector} .column_header") do
           click_link 'Close'
         end
-        page.should_not have_css(selector)
+        expect(page).not_to have_css(selector)
 
       end
     end

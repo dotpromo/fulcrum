@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe ProjectsController do
+describe ProjectsController, :type => :controller do
 
   context "when logged out" do
     %W[index new create].each do |action|
       specify do
         get action
-        response.should redirect_to(new_user_session_url)
+        expect(response).to redirect_to(new_user_session_url)
       end
     end
     %W[show edit update destroy].each do |action|
       specify do
         get action, :id => 42
-        response.should redirect_to(new_user_session_url)
+        expect(response).to redirect_to(new_user_session_url)
       end
     end
   end
@@ -34,8 +34,8 @@ describe ProjectsController do
 
         specify do
           get :index
-          response.should be_success
-          assigns[:projects].should == projects
+          expect(response).to be_success
+          expect(assigns[:projects]).to eq(projects)
         end
 
       end
@@ -44,8 +44,8 @@ describe ProjectsController do
 
         specify do
           get :new
-          response.should be_success
-          assigns[:project].should be_new_record
+          expect(response).to be_success
+          expect(assigns[:project]).to be_new_record
         end
 
       end
@@ -56,23 +56,23 @@ describe ProjectsController do
         let(:users)   { double("users") }
 
         before do
-          projects.stub(:build).with({}) { project }
+          allow(projects).to receive(:build).with({}) { project }
           project.stub(:users => users)
-          users.should_receive(:<<).with(user)
+          expect(users).to receive(:<<).with(user)
           project.stub(:save => true)
         end
 
         specify do
           post :create, :project => {}
-          assigns[:project].should == project
+          expect(assigns[:project]).to eq(project)
         end
 
         context "when save succeeds" do
 
           specify do
             post :create, :project => {}
-            response.should redirect_to(project_url(project))
-            flash[:notice].should == 'Project was successfully created.'
+            expect(response).to redirect_to(project_url(project))
+            expect(flash[:notice]).to eq('Project was successfully created.')
           end
 
         end
@@ -85,8 +85,8 @@ describe ProjectsController do
 
           specify do
             post :create, :project => {}
-            response.should be_success
-            response.should render_template('new')
+            expect(response).to be_success
+            expect(response).to render_template('new')
           end
 
         end
@@ -101,7 +101,7 @@ describe ProjectsController do
       let(:story)   { mock_model(Story) }
 
       before do
-        projects.stub(:find).with(project.id.to_s) { project }
+        allow(projects).to receive(:find).with(project.id.to_s) { project }
         project.stub_chain(:stories, :build) { story }
       end
 
@@ -111,9 +111,9 @@ describe ProjectsController do
 
           specify do
             get :show, :id => project.id
-            response.should be_success
-            assigns[:project].should == project
-            assigns[:story].should == story
+            expect(response).to be_success
+            expect(assigns[:project]).to eq(project)
+            expect(assigns[:story]).to eq(story)
           end
 
         end
@@ -122,9 +122,9 @@ describe ProjectsController do
 
           specify do
             xhr :get, :show, :id => project.id
-            response.should be_success
-            assigns[:project].should == project
-            assigns[:story].should == story
+            expect(response).to be_success
+            expect(assigns[:project]).to eq(project)
+            expect(assigns[:story]).to eq(story)
           end
 
         end
@@ -137,13 +137,13 @@ describe ProjectsController do
 
         before do
           project.stub(:users => users)
-          users.should_receive(:build)
+          expect(users).to receive(:build)
         end
 
         specify do
           get :edit, :id => project.id
-          response.should be_success
-          assigns[:project].should == project
+          expect(response).to be_success
+          expect(assigns[:project]).to eq(project)
         end
 
       end
@@ -151,19 +151,19 @@ describe ProjectsController do
       describe "#update" do
 
         before do
-          project.stub(:update_attributes).with({}) { true }
+          allow(project).to receive(:update_attributes).with({}) { true }
         end
 
         specify do
           put :update, :id => project.id, :project => {}
-          assigns[:project].should == project
+          expect(assigns[:project]).to eq(project)
         end
 
         context "when update succeeds" do
 
           specify do
             put :update, :id => project.id, :project => {}
-            response.should redirect_to(project_url(project))
+            expect(response).to redirect_to(project_url(project))
           end
 
         end
@@ -171,13 +171,13 @@ describe ProjectsController do
         context "when update fails" do
 
           before do
-            project.stub(:update_attributes).with({}) { false }
+            allow(project).to receive(:update_attributes).with({}) { false }
           end
 
           specify do
             put :update, :id => project.id, :project => {}
-            response.should be_success
-            response.should render_template('edit')
+            expect(response).to be_success
+            expect(response).to render_template('edit')
           end
 
         end
@@ -187,12 +187,12 @@ describe ProjectsController do
       describe "#destroy" do
 
         before do
-          project.should_receive(:destroy)
+          expect(project).to receive(:destroy)
         end
 
         specify do
           delete :destroy, :id => project.id
-          response.should redirect_to(projects_url)
+          expect(response).to redirect_to(projects_url)
         end
 
       end

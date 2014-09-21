@@ -1,12 +1,13 @@
 require 'spec_helper'
 
-describe Note do
+describe Note, :type => :model do
 
   let(:project) { mock_model(Project, :suppress_notifications => true) }
   let(:user)    { mock_model(User) }
   let(:story)   { mock_model(Story, :project => project) }
+  let(:note) { FactoryGirl.build(:note, :story => story, :user => user) }
 
-  subject { FactoryGirl.build :note, :story => story, :user => user }
+  subject { note }
 
   describe "validations" do
 
@@ -25,7 +26,7 @@ describe Note do
     let(:changesets)  { double("changesets" ) }
 
     before do
-      changesets.should_receive(:create!)
+      expect(changesets).to receive(:create!)
       story.stub(:changesets  => changesets)
       story.stub(:project     => project)
     end
@@ -43,8 +44,8 @@ describe Note do
       before do
         project.stub(:suppress_notifications => false)
         story.stub(:notify_users => notify_users)
-        Notifications.should_receive(:new_note).with(subject, [user1]).and_return(mailer)
-        mailer.should_receive(:deliver)
+        expect(Notifications).to receive(:new_note).with(subject, [user1]).and_return(mailer)
+        expect(mailer).to receive(:deliver)
       end
 
       it "sends notifications" do
@@ -56,20 +57,23 @@ describe Note do
   describe "#as_json" do
 
     it "returns the right keys" do
-      subject.as_json["note"].keys.sort.should == %w[
+      expect(subject.as_json["note"].keys.sort).to eq(%w[
         created_at errors id note story_id updated_at user_id
-      ]
+      ])
     end
 
   end
 
   describe "#to_s" do
-    before do
-      subject.note = "Test note"
-      subject.created_at = "Nov 3, 2011"
-      user.stub(:name => 'user')
+    before :each do
+      note.note = "Test note"
+      note.created_at = "Nov 3, 2011"
+      allow(user).to receive(:name).and_return('user')
     end
 
-    its(:to_s)  { should == "Test note (user - Nov 03, 2011)" }
+    describe '#to_s' do
+      subject { super().to_s }
+      it { is_expected.to eq("Test note (user - Nov 03, 2011)") }
+    end
   end
 end
