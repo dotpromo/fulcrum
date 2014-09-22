@@ -1,5 +1,4 @@
 env:
-  - "DB=mysql"
   - "DB=postgresql"
 before_script:
   - "export DISPLAY=:99.0"
