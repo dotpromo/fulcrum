@@ -31,9 +31,11 @@ describe('Fulcrum.StoryView', function() {
     this.view = new Fulcrum.StoryView({
       model: this.story
     });
+    this.view.template = sinon.stub();
     this.new_story_view = new Fulcrum.StoryView({
       model: this.new_story
     });
+    this.new_story_view.template = sinon.stub();
 
     window.I18n = {t: sinon.stub()};
 
@@ -153,6 +155,7 @@ describe('Fulcrum.StoryView', function() {
 
     it("should remove itself when edit cancelled if its new", function() {
       var view = new Fulcrum.StoryView({model: this.new_story});
+      view.template = sinon.stub();
       var spy = sinon.spy(this.new_story, "clear");
 
       view.cancelEdit();
@@ -277,8 +280,7 @@ describe('Fulcrum.StoryView', function() {
 
     it("should not show the collapse control if its a new story", function() {
       this.new_story.set({editing: true});
-
-      expect($(this.new_story_view.el)).not.toContain('a.collapse');
+      expect($(this.new_story_view.el)).not.toContainElement('a.collapse');
     });
 
   });
@@ -519,7 +521,7 @@ describe('Fulcrum.StoryView', function() {
 
       beforeEach(function() {
         this.content = {name: "foo", label: "Foo", control: "bar"};
-        this.appendSpy = sinon.spy(jQuery.fn, 'append');
+        this.appendSpy = sinon.spy($.prototype, 'append');
       });
 
       afterEach(function() {

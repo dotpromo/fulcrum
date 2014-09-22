@@ -11,7 +11,7 @@ describe("Fulcrum.ColumnView", function() {
   });
 
   it("sets its name from the name option", function() {
-    expect(this.view.name()).toEqual('Dummy Column');
+    expect(this.view.name).toEqual('Dummy Column');
   });
 
   describe("render", function() {
