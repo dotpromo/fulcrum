@@ -23,16 +23,15 @@ describe StoryObserver, type: :model do
       let(:project) { mock_model(Project) }
 
       before do
-        project.stub(suppress_notifications: false)
-        allow(story).to receive(:state_changed?).and_call_original
-        story.stub(:state_changed? => true)
-        story.stub(project: project)
+        allow(project).to receive(:suppress_notifications).and_return(false)
+        allow(story).to receive(:state_changed?).and_return(true)
+        allow(story).to receive(:project).and_return(project)
       end
 
       context 'when project start date is not set' do
 
         before do
-          project.stub(state: 'started')
+          allow(project).to receive(:state).and_return('started')
         end
 
         it 'sets the project start date' do
@@ -53,29 +52,29 @@ describe StoryObserver, type: :model do
         let(:notifier)      { double('notifier') }
 
         before do
-          story.stub(acting_user: acting_user)
-          story.stub(requested_by: requested_by)
-          story.stub(owned_by: owned_by)
-          project.stub(start_date: true)
+          allow(story).to receive(:acting_user).and_return(acting_user)
+          allow(story).to receive(:requested_by).and_return(requested_by)
+          allow(story).to receive(:owned_by).and_return(owned_by)
+          allow(project).to receive(:start_date).and_return(true)
           expect(notifier).to receive(:deliver)
         end
 
         it "sends 'delivered' email notification" do
-          story.stub(state: 'delivered')
+          allow(story).to receive(:state).and_return('delivered')
           expect(Notifications).to receive(:delivered).with(story, acting_user) {
             notifier
           }
           subject.after_save(story)
         end
         it "sends 'accepted' email notification" do
-          story.stub(state: 'accepted')
+          allow(story).to receive(:state).and_return('accepted')
           expect(Notifications).to receive(:accepted).with(story, acting_user) {
             notifier
           }
           subject.after_save(story)
         end
         it "sends 'rejected' email notification" do
-          story.stub(state: 'rejected')
+          allow(story).to receive(:state).and_return('rejected')
           expect(Notifications).to receive(:rejected).with(story, acting_user) {
             notifier
           }

@@ -37,6 +37,7 @@ group :development, :test do
   gem 'jasmine-rails'
   gem 'capybara'
   gem 'poltergeist'
+  gem 'selenium-webdriver'
   gem 'database_cleaner'
   gem 'quiet_assets'
   gem 'simplecov', '~> 0.9.0', require: false

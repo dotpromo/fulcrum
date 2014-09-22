@@ -1,16 +1,13 @@
 Fulcrum
 =======
 
+[![Build Status](https://travis-ci.org/dotpromo/fulcrum.png?branch=master)](https://travis-ci.org/dotpromo/fulcrum)
+[![Coverage Status](https://coveralls.io/repos/dotpromo/fulcrum/badge.png)](https://coveralls.io/r/dotpromo/fulcrum)
+
 Fulcrum is an application to provide a user story based backlog management
 system for agile development teams.  See
 [the project page](http://wholemeal.co.nz/projects/fulcrum.html) for more
 details.
-
-[![Build Status](https://travis-ci.org/fulcrum-agile/fulcrum.png?branch=master)](https://travis-ci.org/fulcrum-agile/fulcrum)
-
-
-
-![Fulcrum Screenshot](https://github.com/fulcrum-agile/fulcrum/raw/master/doc/screenshot.png)
 
 Get involved
 ------------
@@ -165,7 +162,7 @@ Here are some general guidelines for contributing:
 * All patches changes be covered by tests, and should not break the existing
   tests, unless a current test is invalidated by a code change.  This includes
   Javascript, which is covered with a Jasmine test suite in `spec/javascripts/`.
-* Run `rake spec` to check the Rails test suite is green. You will need 
+* Run `rake spec` to check the Rails test suite is green. You will need
   Firefox with Selenium installed to run the integration tests.
 * To run the Javascript test suite, run `rake jasmine` and point your browser
   to `http://localhost:8888/`

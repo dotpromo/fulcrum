@@ -24,8 +24,8 @@ describe ChangesetsController, type: :controller do
 
     before do
       sign_in user
-      subject.stub(current_user: user)
-      user.stub(projects: projects)
+      allow(subject).to receive(:current_user).and_return(user)
+      allow(user).to receive(:projects).and_return(projects)
       allow(projects).to receive(:find).with(project.id.to_s).and_return(project)
       allow(project).to receive(:changesets).and_return(changesets)
     end
