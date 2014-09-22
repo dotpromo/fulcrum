@@ -239,16 +239,15 @@ describe('Project model', function() {
 
       // If the project start date is not set, it should be considered as the
       // first iteration start day prior to today.
-      // FIXME - Stubbing Date is not working
       var expected_date = new Date('2011/07/23');
       var fake_today = new Date('2011/07/29');
-      // Stop JSHINT complaining about overriding Date
-      /*global Date: true*/
-      orig_date = Date;
-      Date = sinon.stub().returns(fake_today);
+      console.log('fake today getDay', fake_today.getDay());
+      var dateStub = sinon.stub(window, 'Date');
       this.project.unset('start_date');
+      dateStub.onFirstCall().returns(fake_today);
+      dateStub.withArgs(fake_today - 6 * 1000 * 60 * 60 * 24).returns(expected_date);
       expect(this.project.startDate()).toEqual(expected_date);
-      Date = orig_date;
+      dateStub.restore()
     });
   });
 

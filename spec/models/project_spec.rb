@@ -1,77 +1,77 @@
 require 'spec_helper'
 
-describe Project, :type => :model do
+describe Project, type: :model do
   let(:project) { FactoryGirl.build(:project) }
   subject { project }
 
-  describe "validations" do
+  describe 'validations' do
 
-    describe "#name" do
+    describe '#name' do
       before :each do
         project.name = ''
       end
-      it "should have an error on name" do
+      it 'should have an error on name' do
         subject.valid?
         expect(subject.errors[:name].size).to eq(1)
       end
     end
 
-    describe "#default_velocity" do
-      it "must be greater than 0" do
+    describe '#default_velocity' do
+      it 'must be greater than 0' do
         subject.default_velocity = 0
         subject.valid?
         expect(subject.errors[:default_velocity].size).to eq(1)
       end
 
-      it "must be an integer" do
+      it 'must be an integer' do
         subject.default_velocity = 0
         subject.valid?
         expect(subject.errors[:default_velocity].size).to eq(1)
       end
     end
 
-    describe "#point_scale" do
+    describe '#point_scale' do
       before { subject.point_scale = 'invalid_point_scale' }
-      it "has an error on point scale" do
+      it 'has an error on point scale' do
         subject.valid?
         expect(subject.errors[:point_scale].size).to eq(1)
       end
     end
 
-    describe "#iteration_length" do
-      it "must be greater than 0" do
+    describe '#iteration_length' do
+      it 'must be greater than 0' do
         subject.iteration_length = 0
         subject.valid?
         expect(subject.errors[:iteration_length].size).to eq(1)
       end
 
-      it "must be less than 5" do
+      it 'must be less than 5' do
         subject.iteration_length = 0
         subject.valid?
         expect(subject.errors[:iteration_length].size).to eq(1)
       end
 
-      it "must be an integer" do
+      it 'must be an integer' do
         subject.iteration_length = 2.5
         subject.valid?
         expect(subject.errors[:iteration_length].size).to eq(1)
       end
     end
 
-    describe "#iteration_start_day" do
-      it "must be greater than -1" do
+    describe '#iteration_start_day' do
+      it 'must be greater than -1' do
         subject.iteration_start_day = -1
         subject.valid?
         expect(subject.errors[:iteration_start_day].size).to eq(1)
       end
 
-      it "must be less than 6" do
+      it 'must be less than 6' do
         subject.iteration_start_day = 7
         subject.valid?
         expect(subject.errors[:iteration_start_day].size).to eq(1)
       end
 
-      it "must be an integer" do
+      it 'must be an integer' do
         subject.iteration_start_day = 2.5
         subject.valid?
         expect(subject.errors[:iteration_start_day].size).to eq(1)
@@ -80,8 +80,7 @@ describe Project, :type => :model do
 
   end
 
-
-  describe "defaults" do
+  describe 'defaults' do
     subject { Project.new }
 
     describe '#point_scale' do
@@ -110,22 +109,23 @@ describe Project, :type => :model do
     end
   end
 
-
-  describe "cascade deletes" do
+  describe 'cascade deletes' do
     let(:user) { FactoryGirl.create(:user) }
-    let(:project) { FactoryGirl.create(:project, :users => [user]) }
-    let(:story) { FactoryGirl.create(:story, :project => project,
-                                 :requested_by => user) }
+    let(:project) { FactoryGirl.create(:project, users: [user]) }
+    let(:story) do
+      FactoryGirl.create(:story, project: project,
+                                 requested_by: user)
+    end
     before :each do
       story
     end
-    specify "stories" do
+    specify 'stories' do
       expect do
         project.destroy
       end.to change(Story, :count).by(-1)
     end
 
-    specify "changesets" do
+    specify 'changesets' do
       expect do
         project.destroy
       end.to change(Changeset, :count).by(-1)
@@ -133,9 +133,8 @@ describe Project, :type => :model do
 
   end
 
-
-  describe "#to_s" do
-    subject { FactoryGirl.build :project, :name => 'Test Name' }
+  describe '#to_s' do
+    subject { FactoryGirl.build :project, name: 'Test Name' }
 
     describe '#to_s' do
       subject { super().to_s }
@@ -143,15 +142,15 @@ describe Project, :type => :model do
     end
   end
 
-  describe "#point_values" do
+  describe '#point_values' do
     describe '#point_values' do
       subject { super().point_values }
       it { is_expected.to eq(Project::POINT_SCALES['fibonacci']) }
     end
   end
 
-  describe "#last_changeset_id" do
-    context "when there are no changesets" do
+  describe '#last_changeset_id' do
+    context 'when there are no changesets' do
       before do
         allow(project).to receive(:changesets).and_return([])
       end
@@ -162,9 +161,9 @@ describe Project, :type => :model do
       end
     end
 
-    context "when there are changesets" do
+    context 'when there are changesets' do
 
-      let(:changeset) { double("changeset", :id => 42) }
+      let(:changeset) { double('changeset', id: 42) }
 
       before :each do
         allow(project).to receive(:changesets).and_return([nil, nil, changeset])
@@ -180,7 +179,7 @@ describe Project, :type => :model do
   describe 'CSV import' do
     let(:project) { FactoryGirl.create :project }
     let(:user) do
-      FactoryGirl.create(:user).tap do |user|
+      FactoryGirl.create(:user).tap do |_user|
         # project.users << user
       end
     end
@@ -201,8 +200,8 @@ describe Project, :type => :model do
     end
   end
 
-  describe "#csv_filename" do
-    subject { FactoryGirl.build(:project, :name => 'Test Project') }
+  describe '#csv_filename' do
+    subject { FactoryGirl.build(:project, name: 'Test Project') }
 
     describe '#csv_filename' do
       subject { super().csv_filename }
@@ -210,7 +209,7 @@ describe Project, :type => :model do
     end
   end
 
-  describe "#as_json" do
+  describe '#as_json' do
     subject { FactoryGirl.create :project }
 
     (Project::JSON_ATTRIBUTES + Project::JSON_METHODS).each do |key|

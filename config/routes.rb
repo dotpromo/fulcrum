@@ -1,13 +1,14 @@
 Fulcrum::Application.routes.draw do
 
-  get "story/new"
-  get "locales" => "application#locales"
+  mount JasmineRails::Engine => '/specs' if defined?(JasmineRails)
+  get 'story/new'
+  get 'locales' => 'application#locales'
 
   resources :projects do
-    resources :users, :only => [:index, :create, :destroy]
-    resources :changesets, :only => [:index]
-    resources :stories, :only => [:index, :create, :update, :destroy, :show] do
-      resources :notes, :only => [:index, :create, :show, :destroy]
+    resources :users, only: [:index, :create, :destroy]
+    resources :changesets, only: [:index]
+    resources :stories, only: [:index, :create, :update, :destroy, :show] do
+      resources :notes, only: [:index, :create, :show, :destroy]
       collection do
         get :done
         get :in_progress
@@ -25,10 +26,10 @@ Fulcrum::Application.routes.draw do
     end
   end
 
-  devise_for :users, :controllers => { 
-      :confirmations => "confirmations", 
-      :registrations => "registrations"
-    }
+  devise_for :users, controllers: {
+    confirmations: 'confirmations',
+    registrations: 'registrations'
+  }
 
   if Rails.env.development?
     get 'testcard' => 'static#testcard'
@@ -79,7 +80,7 @@ Fulcrum::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  root "projects#index"
+  root 'projects#index'
 
   # See how all your routes lay out with "rake routes"
 

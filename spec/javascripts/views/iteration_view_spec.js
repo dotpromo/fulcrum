@@ -21,6 +21,7 @@ describe('Fulcrum.IterationView', function() {
   describe("render", function() {
 
     beforeEach(function() {
+      this.view.template = sinon.stub();
       this.view.template.returns('<p>foo</p>');
     });
 

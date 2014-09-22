@@ -4,7 +4,7 @@ class Note < ActiveRecord::Base
 
   after_save :create_changeset
 
-  validates :note, :presence => true
+  validates :note, presence: true
 
   # FIXME move to observer
   def create_changeset
@@ -21,14 +21,14 @@ class Note < ActiveRecord::Base
   end
 
   # Defines the attributes and methods that are included when calling to_json
-  def as_json(options = {})
-    super(:methods => ["errors"])
+  def as_json(_options = {})
+    super(methods: ['errors'])
   end
 
   def to_s
     note_string = note
     user_name = user ? user.name : I18n.t('author unknown')
-    created_date = I18n.l created_at, :format => :note_date
-    note_string = note_string + " (" + user_name + " - " + created_date + ")"
+    created_date = I18n.l created_at, format: :note_date
+    note_string = note_string + ' (' + user_name + ' - ' + created_date + ')'
   end
 end

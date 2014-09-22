@@ -1,7 +1,6 @@
 class User < ActiveRecord::Base
-
   # FIXME - DRY up, repeated in Story model
-  JSON_ATTRIBUTES = ["id", "name", "initials", "email"]
+  JSON_ATTRIBUTES = %w(id name initials email)
 
   # Include default devise modules. Others available are:
   # :token_authenticatable, :confirmable, :lockable and :timeoutable
@@ -15,8 +14,8 @@ class User < ActiveRecord::Base
 
   before_validation :set_random_password_if_blank
 
-  validates :name, :presence => true
-  validates :initials, :presence => true
+  validates :name, presence: true
+  validates :initials, presence: true
 
   def password_required?
     # Password is required if it is being set, but not for new records
@@ -32,8 +31,8 @@ class User < ActiveRecord::Base
   end
 
   def set_random_password_if_blank
-    if new_record? && self.password.blank? && self.password_confirmation.blank?
-      self.password = self.password_confirmation = Digest::SHA1.hexdigest("--#{Time.now.to_s}--#{email}--")[0,8]
+    if new_record? && password.blank? && password_confirmation.blank?
+      self.password = self.password_confirmation = Digest::SHA1.hexdigest("--#{Time.now}--#{email}--")[0, 8]
     end
   end
 
@@ -43,11 +42,11 @@ class User < ActiveRecord::Base
     raw, enc = Devise.token_generator.generate(self.class, :reset_password_token)
     self.reset_password_token   = enc
     self.reset_password_sent_at = Time.now.utc
-    self.save(:validate => false)
+    save(validate: false)
     raw
   end
 
-  def as_json(options = {})
-    super(:only => JSON_ATTRIBUTES)
+  def as_json(_options = {})
+    super(only: JSON_ATTRIBUTES)
   end
 end

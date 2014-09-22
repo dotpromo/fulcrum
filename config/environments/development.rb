@@ -23,7 +23,7 @@ Fulcrum::Application.configure do
   config.action_mailer.raise_delivery_errors = true
   config.action_mailer.delivery_method = :letter_opener
 
-  config.action_mailer.default_url_options = { :host => config.fulcrum.app_host }
+  config.action_mailer.default_url_options = { host: config.fulcrum.app_host }
 
   # Debug mode disables concatenation and preprocessing of assets.
   # This option may cause significant delays in view rendering with a large

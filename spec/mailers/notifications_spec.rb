@@ -1,18 +1,18 @@
 require 'spec_helper'
 
-describe Notifications, :type => :mailer do
+describe Notifications, type: :mailer do
 
   let(:requested_by) { mock_model(User) }
   let(:owned_by) { mock_model(User) }
-  let(:project) { mock_model(Project, :name => 'Test Project') }
+  let(:project) { mock_model(Project, name: 'Test Project') }
   let(:story) do
-    mock_model(Story, :title => 'Test story', :requested_by => requested_by,
-                      :owned_by => owned_by, :project => project)
+    mock_model(Story, title: 'Test story', requested_by: requested_by,
+                      owned_by: owned_by, project: project)
   end
 
-  describe "#delivered" do
+  describe '#delivered' do
 
-    let(:delivered_by) { mock_model(User, :name => 'Deliverer') }
+    let(:delivered_by) { mock_model(User, name: 'Deliverer') }
 
     subject  { Notifications.delivered(story, delivered_by) }
 
@@ -32,14 +32,14 @@ describe Notifications, :type => :mailer do
     end
 
     specify { expect(subject.body.encoded).to match("Deliverer has delivered your story 'Test story'.") }
-    specify { expect(subject.body.encoded).to match("You can now review the story, and either accept or reject it.") }
+    specify { expect(subject.body.encoded).to match('You can now review the story, and either accept or reject it.') }
     specify { expect(subject.body.encoded).to match(project_url(project)) }
 
   end
 
-  describe "#accepted" do
+  describe '#accepted' do
 
-    let(:accepted_by) { mock_model(User, :name => 'Accepter') }
+    let(:accepted_by) { mock_model(User, name: 'Accepter') }
 
     subject  { Notifications.accepted(story, accepted_by) }
 
@@ -63,9 +63,9 @@ describe Notifications, :type => :mailer do
 
   end
 
-  describe "#rejected" do
+  describe '#rejected' do
 
-    let(:rejected_by) { mock_model(User, :name => 'Rejecter') }
+    let(:rejected_by) { mock_model(User, name: 'Rejecter') }
 
     subject  { Notifications.rejected(story, rejected_by) }
 
@@ -89,11 +89,11 @@ describe Notifications, :type => :mailer do
 
   end
 
-  describe "#new_note" do
+  describe '#new_note' do
 
-    let(:notify_users)  { [mock_model(User, :email => 'foo@example.com')] }
-    let(:user)          { mock_model(User, :name => 'Note User') }
-    let(:note)          { mock_model(Note, :story => story, :user => user) }
+    let(:notify_users)  { [mock_model(User, email: 'foo@example.com')] }
+    let(:user)          { mock_model(User, name: 'Note User') }
+    let(:note)          { mock_model(Note, story: story, user: user) }
 
     subject { Notifications.new_note(note, notify_users) }
 
@@ -112,6 +112,6 @@ describe Notifications, :type => :mailer do
       it { [user.email] }
     end
 
-    specify { expect(subject.body.encoded).to match("Note User added the following comment to the story") }
+    specify { expect(subject.body.encoded).to match('Note User added the following comment to the story') }
   end
 end

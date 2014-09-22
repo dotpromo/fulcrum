@@ -2,15 +2,15 @@ class Changeset < ActiveRecord::Base
   belongs_to :project
   belongs_to :story
 
-  validates :project, :presence => true
-  validates :story, :presence => true
+  validates :project, presence: true
+  validates :story, presence: true
 
   before_validation :assign_project_from_story
 
   default_scope { order(:id) }
 
-  scope :since, lambda {|id| where("id > ?", id)}
-  scope :until, lambda {|id| where('id <= ?', id)}
+  scope :since, lambda { |id| where('id > ?', id) }
+  scope :until, lambda { |id| where('id <= ?', id) }
 
   protected
 

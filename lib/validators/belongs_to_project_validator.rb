@@ -4,7 +4,7 @@ class BelongsToProjectValidator < ActiveModel::EachValidator
   def validate_each(record, attribute, value)
     if record.project && !value.nil?
       unless record.project.user_ids.include?(value)
-        record.errors[attribute] << "user is not a member of this project"
+        record.errors[attribute] << 'user is not a member of this project'
       end
     end
   end

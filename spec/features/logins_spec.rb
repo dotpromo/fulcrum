@@ -1,13 +1,13 @@
 require 'spec_helper'
 
-describe "Logins", :type => :feature do
+describe 'Logins', type: :feature do
 
-  let(:user)  {
-    FactoryGirl.create :user, :email => 'user@example.com',
-                              :password => 'password'
-  }
+  let(:user)  do
+    FactoryGirl.create :user, email: 'user@example.com',
+                              password: 'password'
+  end
 
-  describe "disable registration" do
+  describe 'disable registration' do
     before do
       Configuration.for('fulcrum') do
         disable_registration true
@@ -20,42 +20,42 @@ describe "Logins", :type => :feature do
       end
     end
 
-    it "removes the sign up link" do
+    it 'removes the sign up link' do
       visit root_path
-      expect(page).to have_selector('h1', :text => 'Sign in')
+      expect(page).to have_selector('h1', text: 'Sign in')
 
-      expect(page).not_to have_selector('a', :text => 'Sign up')
+      expect(page).not_to have_selector('a', text: 'Sign up')
     end
   end
 
-  describe "successful login" do
+  describe 'successful login' do
 
     before { user }
 
-    it "logs in the user", :js => true do
+    it 'logs in the user', js: true do
       visit root_path
-      expect(page).to have_selector('h1', :text => 'Sign in')
+      expect(page).to have_selector('h1', text: 'Sign in')
 
-      fill_in "Email",    :with => "user@example.com"
-      fill_in "Password", :with => "password"
+      fill_in 'Email',    with: 'user@example.com'
+      fill_in 'Password', with: 'password'
       click_button 'Sign in'
 
-      expect(page).to have_selector('h1', :text => 'Listing Projects')
-      expect(page).to have_selector('#primary-nav', :text => 'user@example.com')
+      expect(page).to have_selector('h1', text: 'Listing Projects')
+      expect(page).to have_selector('#primary-nav', text: 'user@example.com')
     end
 
   end
 
-  describe "successful logout", :js => true do
+  describe 'successful logout', js: true do
     before do
       sign_in user
     end
 
-    it "logs out the user" do
+    it 'logs out the user' do
       visit root_path
       click_on 'Log out'
 
-      expect(page).to have_selector('h1', :text => 'Sign in')
+      expect(page).to have_selector('h1', text: 'Sign in')
     end
   end
 

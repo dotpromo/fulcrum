@@ -11,7 +11,7 @@ gem 'jbuilder', '~> 1.2'
 gem 'ejs'
 gem 'compass-rails', '~> 2.0.0'
 gem 'devise', '~> 3.3.0'
-gem 'transitions', '0.1.9', require: ["transitions", "active_record/transitions"]
+gem 'transitions', '0.1.9', require: ['transitions', 'active_record/transitions']
 gem 'rails-i18n'
 gem 'configuration'
 gem 'rails-observers', '~> 0.1.2'
@@ -31,12 +31,14 @@ end
 group :development, :test do
   gem 'pry'
   gem 'sqlite3'
-  gem 'rspec-rails', '~> 2.99.0'
+  gem 'rspec-rails', '>= 3.0.0'
   gem 'rspec-activemodel-mocks'
   gem 'factory_girl_rails'
-  gem 'jasmine', '~> 1.3.2'
+  gem 'jasmine-rails'
   gem 'capybara'
   gem 'poltergeist'
   gem 'database_cleaner'
   gem 'quiet_assets'
+  gem 'simplecov', '~> 0.9.0', require: false
+  gem 'coveralls', require: false
 end

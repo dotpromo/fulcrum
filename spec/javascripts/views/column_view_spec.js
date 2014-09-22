@@ -17,6 +17,7 @@ describe("Fulcrum.ColumnView", function() {
   describe("render", function() {
 
     it("renders the template", function() {
+      this.view.template = sinon.stub();
       this.view.render();
       expect(this.view.template).toHaveBeenCalledWith({
         id: 'dummy_column', name: 'Dummy Column'
@@ -95,7 +96,7 @@ describe("Fulcrum.ColumnView", function() {
     beforeEach(function() {
       this.view.$el.is = sinon.stub();
     });
-      
+
     it("returns true if the column is hidden", function() {
       this.view.$el.is.withArgs(':hidden').returns(true);
       expect(this.view.hidden()).toEqual(true);

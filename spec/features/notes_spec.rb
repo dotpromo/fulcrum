@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Notes", :type => :feature do
+describe 'Notes', type: :feature do
 
   before(:each) do
     # FIXME - Having to set this really high for the 'adds a note to a story
@@ -9,31 +9,31 @@ describe "Notes", :type => :feature do
     sign_in user
   end
 
-  let(:user)  {
-    FactoryGirl.create :user, :email => 'user@example.com',
-                              :password => 'password'
-  }
+  let(:user)  do
+    FactoryGirl.create :user, email: 'user@example.com',
+                              password: 'password'
+  end
 
   let!(:project) do
-    FactoryGirl.create :project,  :name => 'Test Project',
-                                  :users => [user]
+    FactoryGirl.create :project,  name: 'Test Project',
+                                  users: [user]
   end
 
   let!(:story) do
-    FactoryGirl.create :story,  :title => 'Test Story',
-                                :state => 'started',
-                                :project => project,
-                                :requested_by => user
+    FactoryGirl.create :story,  title: 'Test Story',
+                                state: 'started',
+                                project: project,
+                                requested_by: user
   end
 
-  describe "full story life cycle" do
+  describe 'full story life cycle' do
 
-    it "adds a note to a story", js: true, driver: :selenium do
+    it 'adds a note to a story', js: true, driver: :selenium do
       visit project_path(project)
 
       within('#in_progress .story') do
         find('.story-title').click
-        fill_in 'note', :with => 'Adding a new note'
+        fill_in 'note', with: 'Adding a new note'
         click_on 'Add note'
       end
 
@@ -41,10 +41,10 @@ describe "Notes", :type => :feature do
 
     end
 
-  	it "deletes a note from a story", js: true, driver: :selenium do
-      FactoryGirl.create :note, :user => user,
-                                :story => story,
-                                :note => 'Delete me please'
+  	 it 'deletes a note from a story', js: true, driver: :selenium do
+      FactoryGirl.create :note, user: user,
+                                story: story,
+                                note: 'Delete me please'
 
       visit project_path(project)
 

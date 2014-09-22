@@ -1,13 +1,12 @@
 module IntegrationHelpers
-
   def sign_in(user, password = 'password')
     visit root_path
-    fill_in "Email",    :with => user.email
-    fill_in "Password", :with => password
+    fill_in 'Email',    with: user.email
+    fill_in 'Password', with: password
     click_button 'Sign in'
   end
 
-  def send_keys keys, options = {}
+  def send_keys(keys, options = {})
     keycode = case keys
       when '?'
         63
@@ -39,5 +38,4 @@ module IntegrationHelpers
     token = content.at('a')['href'].split('confirmation_token=').last
     token
   end
-
 end

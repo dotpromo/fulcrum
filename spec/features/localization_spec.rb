@@ -1,48 +1,47 @@
 require 'spec_helper'
 
-describe "localization", :type => :feature do
+describe 'localization', type: :feature do
 
   before(:each) do
     sign_in user
   end
 
-  let(:user)  {
-    FactoryGirl.create :user, :email => 'user@example.com',
-                              :password => 'password'
-  }
+  let(:user)  do
+    FactoryGirl.create :user, email: 'user@example.com',
+                              password: 'password'
+  end
 
-  # I am pretty sure there is a better way to do this 
-  let(:current_user) {
-    User.where(:email => "user@example.com").first
-  }
+  # I am pretty sure there is a better way to do this
+  let(:current_user) do
+    User.where(email: 'user@example.com').first
+  end
 
+  describe 'user profile' do
 
-  describe "user profile" do
+    it 'lets user change their locale' do
+      change_locale_to 'en'
 
-    it "lets user change their locale" do
-      change_locale_to "en"
-
-      expect(current_user.locale).to eq("en")
+      expect(current_user.locale).to eq('en')
     end
 
   end
 
-  def change_locale_to new_locale
+  def change_locale_to(new_locale)
     visit edit_user_registration_path
 
-    select new_locale, :from => "Locale"
-    fill_in "Current password", :with => "password"
-    click_on "Update"
+    select new_locale, from: 'Locale'
+    fill_in 'Current password', with: 'password'
+    click_on 'Update'
   end
 
-  describe "application" do
+  describe 'application' do
 
-    it "sets the locale based on the user locale" do
-      change_locale_to "es"
+    it 'sets the locale based on the user locale' do
+      change_locale_to 'es'
 
       visit root_path
 
-      expect(page).to have_selector('h1', :text => 'Listado de Proyectos')
+      expect(page).to have_selector('h1', text: 'Listado de Proyectos')
     end
 
   end

@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-
   respond_to :html, :json
 
   def index
@@ -44,5 +43,4 @@ class UsersController < ApplicationController
     @project.users.delete(@user)
     redirect_to project_users_url(@project)
   end
-
 end

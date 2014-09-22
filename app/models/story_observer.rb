@@ -1,5 +1,4 @@
 class StoryObserver < ActiveRecord::Observer
-
   # Create a new changeset whenever the story is changed
   def after_save(story)
     story.changesets.create!
@@ -34,7 +33,7 @@ class StoryObserver < ActiveRecord::Observer
       # and the state is changing to any state other than 'unstarted' or
       # 'unscheduled'
       # FIXME Make model method on Story
-      if story.project && !story.project.start_date && !['unstarted', 'unscheduled'].include?(story.state)
+      if story.project && !story.project.start_date && !%w(unstarted unscheduled).include?(story.state)
         story.project.update_attribute :start_date, Date.today
       end
     end
@@ -44,7 +43,5 @@ class StoryObserver < ActiveRecord::Observer
     if story.accepted_at_changed? && story.accepted_at && story.accepted_at < story.project.start_date
       story.project.update_attribute :start_date, story.accepted_at
     end
-
   end
-
 end

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe "Keycuts", :type => :feature do
+describe 'Keycuts', type: :feature do
 
   self.use_transactional_fixtures = false
 
@@ -10,67 +10,67 @@ describe "Keycuts", :type => :feature do
     sign_in user
   end
 
-  let(:user) { FactoryGirl.create :user, :email => 'user@example.com', :password => 'password' }
-  let(:project) { FactoryGirl.create :project,  :name => 'Test Project', :users => [user] }
+  let(:user) { FactoryGirl.create :user, email: 'user@example.com', password: 'password' }
+  let(:project) { FactoryGirl.create :project,  name: 'Test Project', users: [user] }
 
-  describe "?" do
-    it 'shows help', :js => true do
+  describe '?' do
+    it 'shows help', js: true do
       send_keys '?'
-      expect(page).to have_css("#keycut-help")
-      expect(page).to have_css("#keycut-help a.close")
+      expect(page).to have_css('#keycut-help')
+      expect(page).to have_css('#keycut-help a.close')
     end
 
-    it 'can close help', :js => true do
+    it 'can close help', js: true do
       send_keys '?'
       within '#keycut-help' do
         click_on 'close'
       end
-      expect(page).not_to have_css("#keycut-help")
+      expect(page).not_to have_css('#keycut-help')
     end
 
-    it 'can close help with ?', :js => true do
+    it 'can close help with ?', js: true do
       send_keys '?'
       send_keys '?'
-      expect(page).not_to have_css("#keycut-help")
+      expect(page).not_to have_css('#keycut-help')
     end
   end
 
   describe 'in project scope' do
     before { visit project_path(project) }
 
-    it 'adds story (a)', :js => true do
+    it 'adds story (a)', js: true do
       send_keys 'a'
       expect(page).to have_css('.story.feature.unscheduled.unestimated.editing')
     end
 
-    it 'saves currently open story (<ctl> + s)', :js => true do
+    it 'saves currently open story (<ctl> + s)', js: true do
       click_on 'Add story'
       within('#chilly_bin') do
-        fill_in 'title', :with => 'New story'
+        fill_in 'title', with: 'New story'
       end
       send_keys :pause # this is equivalent to keycode 19, or ctl+s (at least on my machine)
       expect(page).not_to have_css('.story.editing')
     end
 
-    it 'toggles columns (<shift> b|c|d|p)', :js => true do
-      send_keys "B"
+    it 'toggles columns (<shift> b|c|d|p)', js: true do
+      send_keys 'B'
       expect(page).to have_css('.hide_backlog.pressed')
-      send_keys "B"
+      send_keys 'B'
       expect(page).not_to have_css('.hide_backlog.pressed')
 
-      send_keys "C"
+      send_keys 'C'
       expect(page).to have_css('.hide_chilly_bin.pressed')
-      send_keys "C"
+      send_keys 'C'
       expect(page).not_to have_css('.hide_chilly_bin.pressed')
 
-      send_keys "D"
+      send_keys 'D'
       expect(page).to have_css('.hide_done.pressed')
-      send_keys "D"
+      send_keys 'D'
       expect(page).not_to have_css('.hide_done.pressed')
 
-      send_keys "P"
+      send_keys 'P'
       expect(page).to have_css('.hide_in_progress.pressed')
-      send_keys "P"
+      send_keys 'P'
       expect(page).not_to have_css('.hide_in_progress.pressed')
     end
   end

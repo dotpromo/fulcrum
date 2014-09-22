@@ -39,10 +39,10 @@ module Fulcrum
     # config.i18n.load_path += Dir[Rails.root.join('my', 'locales', '*.{rb,yml}').to_s]
     # config.i18n.default_locale = :de
     config.i18n.enforce_available_locales = true
-    config.i18n.available_locales = ['de', 'el', 'en', 'es', 'nl', 'ja']
+    config.i18n.available_locales = %w(de el en es nl ja)
 
     # Configure the default encoding used in templates for Ruby 1.9.
-    config.encoding = "utf-8"
+    config.encoding = 'utf-8'
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
@@ -56,9 +56,9 @@ module Fulcrum
     # Do not initialize the whole Rails stack when precompiling assets
     config.assets.initialize_on_precompile = false
 
-    load Rails.root.join('config','fulcrum_defaults.rb')
+    load Rails.root.join('config', 'fulcrum_defaults.rb')
     if File.exist?(Rails.root.join('config', 'fulcrum.rb'))
-      load Rails.root.join('config','fulcrum.rb')
+      load Rails.root.join('config', 'fulcrum.rb')
     end
     config.fulcrum = ::Configuration.for 'fulcrum'
   end

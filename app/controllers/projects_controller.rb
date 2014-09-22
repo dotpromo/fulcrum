@@ -1,12 +1,11 @@
 class ProjectsController < ApplicationController
-
   # GET /projects
   # GET /projects.xml
   def index
     @projects = current_user.projects
     respond_to do |format|
       format.html # index.html.erb
-      format.xml  { render :xml => @projects }
+      format.xml  { render xml: @projects }
     end
   end
 
@@ -18,8 +17,8 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       format.html # show.html.erb
-      format.js   { render :json => @project }
-      format.xml  { render :xml => @project }
+      format.js   { render json: @project }
+      format.xml  { render xml: @project }
     end
   end
 
@@ -30,7 +29,7 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       format.html # new.html.erb
-      format.xml  { render :xml => @project }
+      format.xml  { render xml: @project }
     end
   end
 
@@ -48,11 +47,11 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.save
-        format.html { redirect_to(@project, :notice => t('projects.project was successfully created')) }
-        format.xml  { render :xml => @project, :status => :created, :location => @project }
+        format.html { redirect_to(@project, notice: t('projects.project was successfully created')) }
+        format.xml  { render xml: @project, status: :created, location: @project }
       else
-        format.html { render :action => "new" }
-        format.xml  { render :xml => @project.errors, :status => :unprocessable_entity }
+        format.html { render action: 'new' }
+        format.xml  { render xml: @project.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -64,11 +63,11 @@ class ProjectsController < ApplicationController
 
     respond_to do |format|
       if @project.update_attributes(allowed_params)
-        format.html { redirect_to(@project, :notice => t('projects.project was successfully updated')) }
+        format.html { redirect_to(@project, notice: t('projects.project was successfully updated')) }
         format.xml  { head :ok }
       else
-        format.html { render :action => "edit" }
-        format.xml  { render :xml => @project.errors, :status => :unprocessable_entity }
+        format.html { render action: 'edit' }
+        format.xml  { render xml: @project.errors, status: :unprocessable_entity }
       end
     end
   end
@@ -88,7 +87,6 @@ class ProjectsController < ApplicationController
   protected
 
   def allowed_params
-    params.fetch(:project,{}).permit(:name, :point_scale, :default_velocity, :start_date, :iteration_start_day, :iteration_length)
+    params.fetch(:project, {}).permit(:name, :point_scale, :default_velocity, :start_date, :iteration_start_day, :iteration_length)
   end
-
 end

@@ -1,29 +1,22 @@
 class Story < ActiveRecord::Base
-
-  JSON_ATTRIBUTES = [
-    "title", "accepted_at", "created_at", "updated_at", "description",
-    "project_id", "story_type", "owned_by_id", "requested_by_id", "estimate",
-    "state", "position", "id", "labels"
-  ]
-  JSON_METHODS = [
-    "errors", "notes"
-  ]
+  JSON_ATTRIBUTES = %w(title accepted_at created_at updated_at description project_id story_type owned_by_id requested_by_id estimate state position id labels)
+  JSON_METHODS = %w(errors notes)
   CSV_HEADERS = [
-    "Id", "Story","Labels","Iteration","Iteration Start","Iteration End",
-    "Story Type","Estimate","Current State","Created at","Accepted at",
-    "Deadline","Requested By","Owned By","Description","URL"
+    'Id', 'Story', 'Labels', 'Iteration', 'Iteration Start', 'Iteration End',
+    'Story Type', 'Estimate', 'Current State', 'Created at', 'Accepted at',
+    'Deadline', 'Requested By', 'Owned By', 'Description', 'URL'
   ]
 
   belongs_to :project
   validates_presence_of :project
 
-  validates :title, :presence => true
+  validates :title, presence: true
 
-  belongs_to :requested_by, :class_name => 'User'
-  validates :requested_by_id, :belongs_to_project => true
+  belongs_to :requested_by, class_name: 'User'
+  validates :requested_by_id, belongs_to_project: true
 
-  belongs_to :owned_by, :class_name => 'User'
-  validates :owned_by_id, :belongs_to_project => true
+  belongs_to :owned_by, class_name: 'User'
+  validates :owned_by_id, belongs_to_project: true
 
   has_many :changesets
   has_many :notes do
@@ -47,7 +40,7 @@ class Story < ActiveRecord::Base
       notes = []
       row.each do |header, value|
         if header == 'Note' && value
-          note = build(:note => value)
+          note = build(note: value)
           if matches = /(.*)\((.*) - (.*)\)$/.match(value)
             note.note = matches[1].strip
             note.user = project.users.find_by_name(matches[2])
@@ -66,21 +59,19 @@ class Story < ActiveRecord::Base
   # example delivering or modifying it.  Usually set by the controller.
   attr_accessor :acting_user
 
-  STORY_TYPES = [
-    'feature', 'chore', 'bug', 'release'
-  ]
-  validates :story_type, :inclusion => STORY_TYPES
+  STORY_TYPES = %w(feature chore bug release)
+  validates :story_type, inclusion: STORY_TYPES
 
-  validates :estimate, :estimate => true, :allow_nil => true
+  validates :estimate, estimate: true, allow_nil: true
 
   before_validation :set_position_to_last
   before_save :set_accepted_at
 
   # Scopes for the different columns in the UI
-  scope :done, -> { where(:state => :accepted) }
-  scope :in_progress, -> { where(:state => [:started, :finished, :delivered]) }
-  scope :backlog, -> { where(:state => :unstarted) }
-  scope :chilly_bin, -> { where(:state => :unscheduled) }
+  scope :done, -> { where(state: :accepted) }
+  scope :in_progress, -> { where(state: [:started, :finished, :delivered]) }
+  scope :backlog, -> { where(state: :unstarted) }
+  scope :chilly_bin, -> { where(state: :unscheduled) }
 
   include ActiveRecord::Transitions
   state_machine do
@@ -93,27 +84,27 @@ class Story < ActiveRecord::Base
     state :rejected
 
     event :start do
-      transitions :to => :started, :from => [:unstarted, :unscheduled]
+      transitions to: :started, from: [:unstarted, :unscheduled]
     end
 
     event :finish do
-      transitions :to => :finished, :from => :started
+      transitions to: :finished, from: :started
     end
 
     event :deliver do
-      transitions :to => :delivered, :from => :finished
+      transitions to: :delivered, from: :finished
     end
 
     event :accept do
-      transitions :to => :accepted, :from => :delivered
+      transitions to: :accepted, from: :delivered
     end
 
     event :reject do
-      transitions :to => :rejected, :from => :delivered
+      transitions to: :rejected, from: :delivered
     end
 
     event :restart do
-      transitions :to => :started, :from => :rejected
+      transitions to: :started, from: :rejected
     end
   end
 
@@ -158,13 +149,13 @@ class Story < ActiveRecord::Base
   def estimated?
     !estimate.nil?
   end
-  alias :estimated :estimated?
+  alias_method :estimated, :estimated?
 
   # Returns true if this story can have an estimate made against it
   def estimable?
     story_type == 'feature' && !estimated?
   end
-  alias :estimable :estimable?
+  alias_method :estimable, :estimable?
 
   # Returns the CSS id of the column this story belongs in
   def column
@@ -180,8 +171,8 @@ class Story < ActiveRecord::Base
     end
   end
 
-  def as_json(options = {})
-    super(:only => JSON_ATTRIBUTES, :methods => JSON_METHODS)
+  def as_json(_options = {})
+    super(only: JSON_ATTRIBUTES, methods: JSON_METHODS)
   end
 
   def set_position_to_last
@@ -204,15 +195,15 @@ class Story < ActiveRecord::Base
 
   private
 
-    def set_accepted_at
-      if state_changed?
-        if state == 'accepted' && accepted_at == nil
-          # Set accepted at to today when accepted
-          self.accepted_at = Date.today
-        elsif state_was == 'accepted'
-          # Unset accepted at when changing from accepted to something else
-          self.accepted_at = nil
-        end
+  def set_accepted_at
+    if state_changed?
+      if state == 'accepted' && accepted_at.nil?
+        # Set accepted at to today when accepted
+        self.accepted_at = Date.today
+      elsif state_was == 'accepted'
+        # Unset accepted at when changing from accepted to something else
+        self.accepted_at = nil
       end
     end
+  end
 end

@@ -1,34 +1,34 @@
 require 'spec_helper'
 
-describe "Stories", :type => :feature do
+describe 'Stories', type: :feature do
 
   before(:each) do
     sign_in user
   end
 
-  let(:user)  {
-    FactoryGirl.create :user, :email => 'user@example.com',
-                              :password => 'password'
-  }
-
-  let(:project) do
-    FactoryGirl.create :project,  :name => 'Test Project',
-                                  :users => [user]
+  let(:user)  do
+    FactoryGirl.create :user, email: 'user@example.com',
+                              password: 'password'
   end
 
-  describe "full story life cycle" do
+  let(:project) do
+    FactoryGirl.create :project,  name: 'Test Project',
+                                  users: [user]
+  end
+
+  describe 'full story life cycle' do
 
     before do
       project
     end
 
-    it "steps through the full story life cycle", :js => true do
+    it 'steps through the full story life cycle', js: true do
       visit project_path(project)
 
       click_on 'Add story'
 
       within('#chilly_bin') do
-        fill_in 'title', :with => 'New story'
+        fill_in 'title', with: 'New story'
         click_on 'Save'
       end
 
@@ -50,18 +50,18 @@ describe "Stories", :type => :feature do
 
   end
 
-  describe "delete a story" do
+  describe 'delete a story' do
 
-    let(:story) {
-      FactoryGirl.create(:story, :title => 'Delete Me', :project => project,
-                                  :requested_by => user)
-    }
+    let(:story) do
+      FactoryGirl.create(:story, title: 'Delete Me', project: project,
+                                  requested_by: user)
+    end
 
     before do
       story
     end
 
-    it "deletes the story", :js => true do
+    it 'deletes the story', js: true do
       visit project_path(project)
 
       within(story_selector(story)) do
@@ -74,22 +74,22 @@ describe "Stories", :type => :feature do
 
   end
 
-  describe "show and hide columns" do
+  describe 'show and hide columns' do
 
     before do
       project
       Capybara.ignore_hidden_elements = true
     end
 
-    it "hides and shows the columns", :js => true do
+    it 'hides and shows the columns', js: true do
 
       visit project_path(project)
 
       columns = {
-        "done"        => "Done",
-        "in_progress" => "In Progress",
-        "backlog"     => "Backlog",
-        "chilly_bin"  => "Chilly Bin"
+        'done'        => 'Done',
+        'in_progress' => 'In Progress',
+        'backlog'     => 'Backlog',
+        'chilly_bin'  => 'Chilly Bin'
       }
 
       columns.each do |column, button_text|

@@ -1,14 +1,14 @@
 require 'spec_helper'
 
-describe Story, :type => :model do
+describe Story, type: :model do
 
   let(:story) { FactoryGirl.build(:story) }
   subject { story  }
 
-  describe "validations" do
+  describe 'validations' do
 
     describe '#title' do
-      it "is required" do
+      it 'is required' do
         subject.title = ''
         subject.valid?
         expect(subject.errors[:title].size).to eq(1)
@@ -16,13 +16,13 @@ describe Story, :type => :model do
     end
 
     describe '#story_type' do
-      it "is required" do
+      it 'is required' do
         subject.story_type = nil
         subject.valid?
         expect(subject.errors[:story_type].size).to eq(1)
       end
 
-      it "is must be a valid story type" do
+      it 'is must be a valid story type' do
         subject.story_type = 'flum'
         subject.valid?
         expect(subject.errors[:story_type].size).to eq(1)
@@ -30,27 +30,27 @@ describe Story, :type => :model do
     end
 
     describe '#state' do
-      it "must be a valid state" do
+      it 'must be a valid state' do
         subject.state = 'flum'
         subject.valid?
         expect(subject.errors[:state].size).to eq(1)
       end
     end
 
-    describe "#project" do
-      it "cannot be nil" do
+    describe '#project' do
+      it 'cannot be nil' do
         subject.project_id = nil
         subject.valid?
         expect(subject.errors[:project].size).to eq(1)
       end
 
-      it "must have a valid project_id" do
-        subject.project_id = "invalid"
+      it 'must have a valid project_id' do
+        subject.project_id = 'invalid'
         subject.valid?
         expect(subject.errors[:project].size).to eq(1)
       end
 
-      it "must have a project" do
+      it 'must have a project' do
         subject.project =  nil
         subject.valid?
         expect(subject.errors[:project].size).to eq(1)
@@ -58,7 +58,7 @@ describe Story, :type => :model do
     end
 
     describe '#estimate' do
-      it "must be valid for the project point scale" do
+      it 'must be valid for the project point scale' do
         subject.project.point_scale = 'fibonacci'
         subject.estimate = 4 # not in the fibonacci series
         subject.valid?
@@ -68,67 +68,67 @@ describe Story, :type => :model do
 
   end
 
-  describe "defaults" do
+  describe 'defaults' do
 
     subject { Story.new }
 
     describe '#state' do
       subject { super().state }
-      it { is_expected.to eq("unstarted") }
+      it { is_expected.to eq('unstarted') }
     end
 
     describe '#story_type' do
       subject { super().story_type }
-      it { is_expected.to eq("feature") }
+      it { is_expected.to eq('feature') }
     end
 
   end
 
-  describe "#to_s" do
+  describe '#to_s' do
 
     before :each do
-      story.title = "Dummy Title"
+      story.title = 'Dummy Title'
     end
 
     describe '#to_s' do
       subject { super().to_s }
-      it { is_expected.to eq("Dummy Title") }
+      it { is_expected.to eq('Dummy Title') }
     end
 
   end
 
-  describe "#estimated?" do
+  describe '#estimated?' do
 
-    context "when estimate is nil" do
+    context 'when estimate is nil' do
       before { subject.estimate = nil }
       it { is_expected.not_to be_estimated }
     end
 
-    context "when estimate is not nil" do
+    context 'when estimate is not nil' do
       before { subject.estimate = 0 }
       it { is_expected.to be_estimated }
     end
 
   end
 
-  describe "#estimable?" do
+  describe '#estimable?' do
 
-    context "when story is a feature" do
+    context 'when story is a feature' do
       before { subject.story_type = 'feature' }
 
-      context "when estimate is nil" do
+      context 'when estimate is nil' do
         before { subject.estimate = nil }
         it { is_expected.to be_estimable }
       end
 
-      context "when estimate is not nil" do
+      context 'when estimate is not nil' do
         before { subject.estimate = 0 }
         it { is_expected.not_to be_estimable }
       end
 
     end
 
-    ['chore', 'bug', 'release'].each do |story_type|
+    %w(chore bug release).each do |story_type|
       specify "a #{story_type} is not estimable" do
         subject.story_type = story_type
         expect(subject).not_to be_estimable
@@ -137,56 +137,52 @@ describe Story, :type => :model do
 
   end
 
-  describe "#as_json" do
+  describe '#as_json' do
     before { subject.id = 42 }
 
     specify do
-      expect(subject.as_json['story'].keys.sort).to eq([
-        "title", "accepted_at", "created_at", "updated_at", "description",
-        "project_id", "story_type", "owned_by_id", "requested_by_id", "estimate",
-        "state", "position", "id", "errors", "labels", "notes"
-      ].sort)
+      expect(subject.as_json['story'].keys.sort).to eq(%w(title accepted_at created_at updated_at description project_id story_type owned_by_id requested_by_id estimate state position id errors labels notes).sort)
     end
   end
 
-  describe "#set_position_to_last" do
+  describe '#set_position_to_last' do
 
-    context "when position is set" do
+    context 'when position is set' do
       before { subject.position = 42 }
 
-      it "does nothing" do
+      it 'does nothing' do
         expect(subject.set_position_to_last).to be_truthy
         subject.position = 42
       end
     end
 
-    context "when there are no other stories" do
+    context 'when there are no other stories' do
       before { subject.stub_chain(:project, :stories, :order, :first).and_return(nil) }
 
-      it "sets position to 1" do
+      it 'sets position to 1' do
         subject.set_position_to_last
         expect(subject.position).to eq(1)
       end
     end
 
-    context "when there are other stories" do
+    context 'when there are other stories' do
 
-      let(:last_story) { mock_model(Story, :position => 41) }
+      let(:last_story) { mock_model(Story, position: 41) }
 
       before do
         subject.stub_chain(:project, :stories, :order, :first).and_return(last_story)
       end
 
-      it "incrememnts the position by 1" do
+      it 'incrememnts the position by 1' do
         subject.set_position_to_last
         expect(subject.position).to eq(42)
       end
     end
   end
 
-  describe "#accepted_at" do
+  describe '#accepted_at' do
 
-    context "when not set" do
+    context 'when not set' do
 
       before { subject.accepted_at = nil }
 
@@ -198,7 +194,7 @@ describe Story, :type => :model do
 
     end
 
-    context "when set" do
+    context 'when set' do
 
       before { subject.accepted_at = Date.parse('1999/01/01') }
 
@@ -218,23 +214,23 @@ describe Story, :type => :model do
     end
   end
 
-  describe "#to_csv" do
+  describe '#to_csv' do
 
-    it "returns an array" do
+    it 'returns an array' do
       expect(subject.to_csv).to be_kind_of(Array)
     end
 
-    it "has the same number of elements as the .csv_headers" do
+    it 'has the same number of elements as the .csv_headers' do
       expect(subject.to_csv.length).to eq(Story.csv_headers.length)
     end
   end
 
-  describe "#notify_users" do
+  describe '#notify_users' do
 
     let(:requested_by)  { mock_model(User) }
     let(:owned_by)      { mock_model(User) }
     let(:note_user)     { mock_model(User) }
-    let(:notes)         { [mock_model(Note, :user => note_user)] }
+    let(:notes)         { [mock_model(Note, user: note_user)] }
 
     before do
       subject.requested_by  = requested_by
@@ -254,13 +250,13 @@ describe Story, :type => :model do
       expect(subject.notify_users).to include(note_user)
     end
 
-    it "strips out nil values" do
+    it 'strips out nil values' do
       subject.requested_by = subject.owned_by = nil
       expect(subject.notify_users).not_to include(nil)
     end
   end
 
-  context "when unscheduled" do
+  context 'when unscheduled' do
     before :each do
       story.state = 'unscheduled'
     end
@@ -276,7 +272,7 @@ describe Story, :type => :model do
     end
   end
 
-  context "when unstarted" do
+  context 'when unstarted' do
     before :each do
       story.state = 'unstarted'
     end
@@ -292,7 +288,7 @@ describe Story, :type => :model do
     end
   end
 
-  context "when started" do
+  context 'when started' do
     before :each do
       story.state = 'started'
     end
@@ -308,7 +304,7 @@ describe Story, :type => :model do
     end
   end
 
-  context "when finished" do
+  context 'when finished' do
     before :each do
       story.state = 'finished'
     end
@@ -324,7 +320,7 @@ describe Story, :type => :model do
     end
   end
 
-  context "when delivered" do
+  context 'when delivered' do
     before :each do
       story.state = 'delivered'
     end
@@ -345,7 +341,7 @@ describe Story, :type => :model do
     end
   end
 
-  context "when rejected" do
+  context 'when rejected' do
     before :each do
       story.state = 'rejected'
     end
@@ -361,7 +357,7 @@ describe Story, :type => :model do
     end
   end
 
-  context "when accepted" do
+  context 'when accepted' do
     before :each do
       story.state = 'accepted'
     end
@@ -376,7 +372,6 @@ describe Story, :type => :model do
       it { is_expected.to eq('#done') }
     end
   end
-
 
   describe '.csv_headers' do
 
