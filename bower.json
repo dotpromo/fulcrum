@@ -1,0 +1,23 @@
+{
+  "name": "fulcrum",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dotpromo/fulcrum",
+  "authors": [
+    "Alexander Simonov <alex@simonov.me>"
+  ],
+  "description": "An agile project planning tool",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "vendor/assets/components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery-ui": "~1.11.1",
+    "backbone": "~1.1.2",
+    "bootstrap": "~3.2.0"
+  }
+}

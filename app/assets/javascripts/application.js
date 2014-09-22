@@ -4,7 +4,7 @@
 // some of the bootstrap libs like twipsy
 //= require jquery/dist/jquery
 //= require jquery_ujs
-//= require jquery-ui-1.8.23
+//= require jquery-ui/jquery-ui
 //= require jquery.gritter.min
 //= require jquery.scrollTo-min
 //= require date.format
