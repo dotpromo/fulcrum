@@ -1,7 +1,7 @@
 describe('Fulcrum.ProjectVelocityView', function() {
 
   beforeEach(function() {
-    this.model = {bind: sinon.stub()};
+    this.model = new Fulcrum.Project({});
     sinon.stub(Fulcrum, 'ProjectVelocityOverrideView');
     this.overrideView = {};
     Fulcrum.ProjectVelocityOverrideView.withArgs({model: this.model}).returns(
@@ -12,7 +12,7 @@ describe('Fulcrum.ProjectVelocityView', function() {
 
   afterEach(function() {
     Fulcrum.ProjectVelocityOverrideView.restore();
-  }); 
+  });
 
   it("should have a top level element", function() {
     expect(this.subject.el.nodeName).toEqual('DIV');
